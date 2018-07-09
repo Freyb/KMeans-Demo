@@ -9,12 +9,11 @@ class KMeans:
 
     def __init__(self):
         self.K_CLUSTERS = 5
-        self.ITERATION = 30
         self.COLORS = ['b', 'g', 'y', 'c', 'k', 'm']
         self.RANGES = [60, 80, 80, 170]
         self.DELETE_THRESHOLD = 1
         assert len(self.COLORS) <= 6
-
+        self.iterations = 0
         """data_points = np.array([(1,1),
                       (1,2),
                       (2,2),
@@ -27,6 +26,19 @@ class KMeans:
         self.cluster_points = np.empty((self.K_CLUSTERS, 2)).astype(int)
         for i in range(self.K_CLUSTERS):
             self.cluster_points[i] = (randint(self.RANGES[0], self.RANGES[1]), randint(self.RANGES[2], self.RANGES[3]))
+
+        fig = plt.figure()
+        self.ax = fig.add_subplot(111)
+        fig.canvas.mpl_connect('button_press_event', self.onclick)
+        plt.title("K-MEANS ALGORITHM")
+        plt.xlabel("Height(Inches)")
+        plt.ylabel("Weight(Pounds)")
+        plt.axis(self.RANGES)
+        self.plotaxes = plt.gca()
+        axnext = plt.axes([0.9, 0.9, 0.075, 0.075])
+        bnext = Button(axnext, 'Next')
+        bnext.on_clicked(self.next_iteration)
+        plt.show()
 
     @staticmethod
     def distance(point1, point2):
@@ -58,29 +70,22 @@ class KMeans:
         return clusters
 
     def plot_data(self, argmin_vector):
-        plt.clf()
+        self.ax.clear()
+        print(self.ax)
+        plt.subplot(self.ax)
+        plt.title("K-MEANS ALGORITHM")
+        plt.xlabel("Height(Inches)")
+        plt.ylabel("Weight(Pounds)")
+        plt.axis(self.RANGES)
         for j in range(self.K_CLUSTERS):
             clustered_points = self.get_cluster(argmin_vector, j)
             plt.plot(clustered_points[:, 0], clustered_points[:, 1], self.COLORS[j] + 'o')
 
         plt.plot(self.cluster_points[:, 0], self.cluster_points[:, 1], 'ro')
-
-        plt.title("K-MEANS ALGORITHM")
-        plt.xlabel("Height(Inches)")
-        plt.ylabel("Weight(Pounds)")
-        plt.axis(self.RANGES)
-        self.plotaxes = plt.gca()
-        axnext = plt.axes([0.9, 0.9, 0.075, 0.075])
-        bnext = Button(axnext, 'Next')
-        bnext.on_clicked(self.next_iteration)
-        plt.show()
+        plt.draw()
 
     def run(self):
         print("STARTING POINTS: ", self.cluster_points)
-
-        fig = plt.figure()
-        fig.canvas.mpl_connect('button_press_event', self.onclick)
-
         dm = self.distance_matrix(self.cluster_points, self.data_points)
         am = np.argmin(dm, 1)
         self.cluster_points = self.calc_mean(am)
@@ -101,11 +106,14 @@ class KMeans:
                         break
 
     def next_iteration(self, event):
+        self.iterations += 1
+        print("Iteration: ", self.iterations)
         dm = self.distance_matrix(self.cluster_points, self.data_points)
         am = np.argmin(dm, 1)
         # print("AM", am)
         self.cluster_points = self.calc_mean(am)
         self.plot_data(am)
+        print("KILEP")
 
 
 if __name__ == '__main__':
