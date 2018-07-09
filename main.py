@@ -25,7 +25,7 @@ def calc_mean(data_points, cluster_points, argmin_vector, K_CLUSTERS):
     clusters = np.empty((K_CLUSTERS,2))
     for i in range(K_CLUSTERS):
         sub_data = get_cluster(data_points, argmin_vector, i)
-        clusters[i] = np.mean(sub_data, 0) if len(sub_data)>0 else cluster_points[i]
+        clusters[i] = np.median(sub_data, 0) if len(sub_data)>0 else cluster_points[i]
 
     return clusters
 
@@ -37,6 +37,12 @@ def plot_data(data_points, cluster_points, argmin_vector, K_CLUSTERS, COLORS):
         plt.plot(clustered_points[:, 0], clustered_points[:, 1], COLORS[j] + 'o')
 
     plt.plot(cluster_points[:, 0], cluster_points[:, 1], 'ro')
+
+
+def onclick(event):
+    print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+          ('double' if event.dblclick else 'single', event.button,
+           event.x, event.y, event.xdata, event.ydata))
 
 
 def main():
@@ -62,9 +68,11 @@ def main():
     print("STARTING POINTS: ", cluster_points)
 
     # Algorithm
+    fig = plt.figure()
     plt.ion()
     plt.show()
 
+    fig.canvas.mpl_connect('button_press_event', onclick)
     for i in range(ITERATION):
         print("Iteration", i+1)
         dm = distance_matrix(cluster_points, data_points)
