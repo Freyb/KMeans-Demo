@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from random import randint
+from math import sqrt, pow
 
 
 class KMeans:
@@ -10,6 +11,7 @@ class KMeans:
         self.ITERATION = 30
         self.COLORS = ['b', 'g', 'y', 'c', 'k', 'm']
         self.RANGES = [60, 80, 80, 170]
+        self.DELETE_THRESHOLD = 1
         assert len(self.COLORS) <= 6
 
         """data_points = np.array([(1,1),
@@ -25,13 +27,16 @@ class KMeans:
         for i in range(self.K_CLUSTERS):
             self.cluster_points[i] = (randint(self.RANGES[0], self.RANGES[1]), randint(self.RANGES[2], self.RANGES[3]))
 
-    def distance(self, list, point):
+    def distance(self, point1, point2):
+        return sqrt(pow(point1[0]-point2[0], 2)+pow(point1[1]-point2[1], 2))
+
+    def distance_list(self, list, point):
         return np.sqrt(np.square(list[:,0]-point[0])+np.square(list[:,1]-point[1]))
 
     def distance_matrix(self, list1, list2):
         matrix = np.empty((len(list2), len(list1)))
         for i in range(len(list1)):
-            matrix[:, i] = self.distance(list2, list1[i])
+            matrix[:,i] = self.distance_list(list2, list1[i])
 
         return matrix
 
@@ -71,6 +76,7 @@ class KMeans:
             am = np.argmin(dm, 1)
             # print("AM", am)
 
+            self.cluster_points = self.calc_mean(am)
             self.plot_data(am)
             plt.title("K-MEANS ALGORITHM")
             plt.xlabel("Height(Inches)")
@@ -80,14 +86,23 @@ class KMeans:
             plt.pause(0.001)
             input("Press [enter] to continue.")
 
-            self.cluster_points = self.calc_mean(am)
-
         print("ENDING POINTS: ", self.cluster_points)
 
     def onclick(self, event):
-        print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+        """print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
               ('double' if event.dblclick else 'single', event.button,
-               event.x, event.y, event.xdata, event.ydata))
+               event.x, event.y, event.xdata, event.ydata))"""
+        if event.button == 1:
+            print(len(self.data_points))
+            self.data_points = np.append(self.data_points, [[round(event.xdata, 2), round(event.ydata, 2)]], axis=0)
+            print(len(self.data_points))
+
+        elif event.button == 3:
+            point = [round(event.xdata, 2), round(event.ydata, 2)]
+            for i in range(len(self.data_points)):
+                if self.distance(self.data_points[i], point) < self.DELETE_THRESHOLD:
+                    self.data_points = np.delete(self.data_points, i, axis=0)
+                    break
 
 
 if __name__ == '__main__':
