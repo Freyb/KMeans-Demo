@@ -62,34 +62,33 @@ class KMeans:
 
         plt.plot(self.cluster_points[:, 0], self.cluster_points[:, 1], 'ro')
 
+        plt.title("K-MEANS ALGORITHM")
+        plt.xlabel("Height(Inches)")
+        plt.ylabel("Weight(Pounds)")
+        plt.axis(self.RANGES)
+        axnext = plt.axes([0.9, 0.9, 0.075, 0.075])
+        bnext = Button(axnext, 'Next')
+        bnext.on_clicked(self.next_iteration)
+        plt.show()
+
     def run(self):
         print("STARTING POINTS: ", self.cluster_points)
 
         # Algorithm
         fig = plt.figure()
-        plt.ion()
-        plt.show()
+        #plt.ion()
+        #plt.show()
 
         fig.canvas.mpl_connect('button_press_event', self.onclick)
 
-        for i in range(self.ITERATION):
-            print("Iteration", i + 1)
-            dm = self.distance_matrix(self.cluster_points, self.data_points)
-            am = np.argmin(dm, 1)
-            # print("AM", am)
+        """for i in range(self.ITERATION):
+            print("Iteration", i + 1)"""
+        dm = self.distance_matrix(self.cluster_points, self.data_points)
+        am = np.argmin(dm, 1)
+        # print("AM", am)
 
-            self.cluster_points = self.calc_mean(am)
-            self.plot_data(am)
-            plt.title("K-MEANS ALGORITHM")
-            plt.xlabel("Height(Inches)")
-            plt.ylabel("Weight(Pounds)")
-            plt.axis(self.RANGES)
-            axnext = plt.axes([0.9, 0.9, 0.075, 0.075])
-            bnext = Button(axnext, 'Next')
-            bnext.on_clicked(self.nextevent)
-            plt.draw()
-            plt.pause(0.001)
-            input("Press [enter] to continue.")
+        self.cluster_points = self.calc_mean(am)
+        self.plot_data(am)
 
         print("ENDING POINTS: ", self.cluster_points)
 
@@ -98,9 +97,7 @@ class KMeans:
               ('double' if event.dblclick else 'single', event.button,
                event.x, event.y, event.xdata, event.ydata))"""
         if event.button == 1:
-            print(len(self.data_points))
             self.data_points = np.append(self.data_points, [[round(event.xdata, 2), round(event.ydata, 2)]], axis=0)
-            print(len(self.data_points))
 
         elif event.button == 3:
             point = [round(event.xdata, 2), round(event.ydata, 2)]
@@ -109,8 +106,12 @@ class KMeans:
                     self.data_points = np.delete(self.data_points, i, axis=0)
                     break
 
-    def nextevent(self, event):
-        print("ASDASDASD")
+    def next_iteration(self, event):
+        dm = self.distance_matrix(self.cluster_points, self.data_points)
+        am = np.argmin(dm, 1)
+        # print("AM", am)
+        self.cluster_points = self.calc_mean(am)
+        self.plot_data(am)
 
 if __name__ == '__main__':
     kmeans = KMeans()
