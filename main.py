@@ -33,6 +33,8 @@ def calc_mean(data_points, cluster_points, argmin_vector, K_CLUSTERS):
 def main():
     K_CLUSTERS = 2
     ITERATION = 100
+    COLORS = ['b', 'r']
+    assert len(COLORS) == K_CLUSTERS
 
     data_points = np.array([(1,1),
               (1,2),
@@ -59,13 +61,17 @@ def main():
         cluster_points = calc_mean(data_points, cluster_points, am, K_CLUSTERS)
 
         plt.clf()
-        plt.plot(data_points[:, 0], data_points[:, 1], 'bo')
+        for j in range(K_CLUSTERS):
+            clustered_points = get_cluster(data_points, am, j)
+            plt.plot(clustered_points[:, 0], clustered_points[:, 1], COLORS[j]+'o')
+
         plt.axis([0, 10, 0, 10])
         plt.draw()
         plt.pause(0.001)
         input("Press [enter] to continue.")
 
     print("ENDING POINTS: ", cluster_points)
+
 
 if __name__ == '__main__':
     main()
