@@ -28,16 +28,19 @@ class KMeans:
         for i in range(self.K_CLUSTERS):
             self.cluster_points[i] = (randint(self.RANGES[0], self.RANGES[1]), randint(self.RANGES[2], self.RANGES[3]))
 
-    def distance(self, point1, point2):
+    @staticmethod
+    def distance(point1, point2):
         return sqrt(pow(point1[0]-point2[0], 2)+pow(point1[1]-point2[1], 2))
 
-    def distance_list(self, list, point):
-        return np.sqrt(np.square(list[:,0]-point[0])+np.square(list[:,1]-point[1]))
+    @staticmethod
+    def distance_list(listobj, point):
+        return np.sqrt(np.square(listobj[:, 0]-point[0])+np.square(listobj[:, 1]-point[1]))
 
-    def distance_matrix(self, list1, list2):
+    @staticmethod
+    def distance_matrix(list1, list2):
         matrix = np.empty((len(list2), len(list1)))
         for i in range(len(list1)):
-            matrix[:,i] = self.distance_list(list2, list1[i])
+            matrix[:, i] = KMeans.distance_list(list2, list1[i])
 
         return matrix
 
@@ -47,10 +50,10 @@ class KMeans:
         return sub_data
 
     def calc_mean(self, argmin_vector):
-        clusters = np.empty((self.K_CLUSTERS,2))
+        clusters = np.empty((self.K_CLUSTERS, 2))
         for i in range(self.K_CLUSTERS):
             sub_data = self.get_cluster(argmin_vector, i)
-            clusters[i] = np.median(sub_data, 0) if len(sub_data)>0 else self.cluster_points[i]
+            clusters[i] = np.median(sub_data, 0) if len(sub_data) > 0 else self.cluster_points[i]
 
         return clusters
 
@@ -66,6 +69,7 @@ class KMeans:
         plt.xlabel("Height(Inches)")
         plt.ylabel("Weight(Pounds)")
         plt.axis(self.RANGES)
+        self.plotaxes = plt.gca()
         axnext = plt.axes([0.9, 0.9, 0.075, 0.075])
         bnext = Button(axnext, 'Next')
         bnext.on_clicked(self.next_iteration)
@@ -74,37 +78,27 @@ class KMeans:
     def run(self):
         print("STARTING POINTS: ", self.cluster_points)
 
-        # Algorithm
         fig = plt.figure()
-        #plt.ion()
-        #plt.show()
-
         fig.canvas.mpl_connect('button_press_event', self.onclick)
 
-        """for i in range(self.ITERATION):
-            print("Iteration", i + 1)"""
         dm = self.distance_matrix(self.cluster_points, self.data_points)
         am = np.argmin(dm, 1)
-        # print("AM", am)
-
         self.cluster_points = self.calc_mean(am)
         self.plot_data(am)
 
         print("ENDING POINTS: ", self.cluster_points)
 
     def onclick(self, event):
-        """print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-              ('double' if event.dblclick else 'single', event.button,
-               event.x, event.y, event.xdata, event.ydata))"""
-        if event.button == 1:
-            self.data_points = np.append(self.data_points, [[round(event.xdata, 2), round(event.ydata, 2)]], axis=0)
+        if event.inaxes == self.plotaxes:
+            if event.button == 1:
+                self.data_points = np.append(self.data_points, [[round(event.xdata, 2), round(event.ydata, 2)]], axis=0)
 
-        elif event.button == 3:
-            point = [round(event.xdata, 2), round(event.ydata, 2)]
-            for i in range(len(self.data_points)):
-                if self.distance(self.data_points[i], point) < self.DELETE_THRESHOLD:
-                    self.data_points = np.delete(self.data_points, i, axis=0)
-                    break
+            elif event.button == 3:
+                point = [round(event.xdata, 2), round(event.ydata, 2)]
+                for i in range(len(self.data_points)):
+                    if self.distance(self.data_points[i], point) < self.DELETE_THRESHOLD:
+                        self.data_points = np.delete(self.data_points, i, axis=0)
+                        break
 
     def next_iteration(self, event):
         dm = self.distance_matrix(self.cluster_points, self.data_points)
@@ -112,6 +106,7 @@ class KMeans:
         # print("AM", am)
         self.cluster_points = self.calc_mean(am)
         self.plot_data(am)
+
 
 if __name__ == '__main__':
     kmeans = KMeans()
