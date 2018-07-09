@@ -34,6 +34,7 @@ def main():
     K_CLUSTERS = 2
     ITERATION = 100
     COLORS = ['b', 'r']
+    RANGES = [0, 10, 0, 10]
     assert len(COLORS) == K_CLUSTERS
 
     data_points = np.array([(1,1),
@@ -45,7 +46,7 @@ def main():
 
     cluster_points = np.empty((K_CLUSTERS, 2)).astype(int)
     for i in range(K_CLUSTERS):
-        cluster_points[i] = (randint(0,10), randint(0,10))
+        cluster_points[i] = (randint(RANGES[0], RANGES[1]), randint(RANGES[2], RANGES[3]))
 
     print("STARTING POINTS: ", cluster_points)
 
@@ -65,7 +66,7 @@ def main():
             clustered_points = get_cluster(data_points, am, j)
             plt.plot(clustered_points[:, 0], clustered_points[:, 1], COLORS[j]+'o')
 
-        plt.axis([0, 10, 0, 10])
+        plt.axis(RANGES)
         plt.draw()
         plt.pause(0.001)
         input("Press [enter] to continue.")
