@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.widgets import Button
 from random import randint
 from math import sqrt, pow
 
@@ -70,6 +71,7 @@ class KMeans:
         plt.show()
 
         fig.canvas.mpl_connect('button_press_event', self.onclick)
+
         for i in range(self.ITERATION):
             print("Iteration", i + 1)
             dm = self.distance_matrix(self.cluster_points, self.data_points)
@@ -82,6 +84,9 @@ class KMeans:
             plt.xlabel("Height(Inches)")
             plt.ylabel("Weight(Pounds)")
             plt.axis(self.RANGES)
+            axnext = plt.axes([0.9, 0.9, 0.075, 0.075])
+            bnext = Button(axnext, 'Next')
+            bnext.on_clicked(self.nextevent)
             plt.draw()
             plt.pause(0.001)
             input("Press [enter] to continue.")
@@ -104,6 +109,8 @@ class KMeans:
                     self.data_points = np.delete(self.data_points, i, axis=0)
                     break
 
+    def nextevent(self, event):
+        print("ASDASDASD")
 
 if __name__ == '__main__':
     kmeans = KMeans()
