@@ -30,19 +30,30 @@ def calc_mean(data_points, cluster_points, argmin_vector, K_CLUSTERS):
     return clusters
 
 
-def main():
-    K_CLUSTERS = 2
-    ITERATION = 100
-    COLORS = ['b', 'r']
-    RANGES = [0, 10, 0, 10]
-    assert len(COLORS) == K_CLUSTERS
+def plot_data(data_points, cluster_points, argmin_vector, K_CLUSTERS, COLORS):
+    plt.clf()
+    for j in range(K_CLUSTERS):
+        clustered_points = get_cluster(data_points, argmin_vector, j)
+        plt.plot(clustered_points[:, 0], clustered_points[:, 1], COLORS[j] + 'o')
 
-    data_points = np.array([(1,1),
+    plt.plot(cluster_points[:, 0], cluster_points[:, 1], 'ro')
+
+
+def main():
+    K_CLUSTERS = 5
+    ITERATION = 30
+    COLORS = ['b', 'g', 'y', 'c', 'k', 'm']
+    RANGES = [60, 80, 80, 170]
+    assert len(COLORS)<=6
+
+    """data_points = np.array([(1,1),
               (1,2),
               (2,2),
               (5,8),
               (6,8),
-              (6,9)])
+              (6,9)])"""
+
+    data_points = np.loadtxt('dataset.txt')
 
     cluster_points = np.empty((K_CLUSTERS, 2)).astype(int)
     for i in range(K_CLUSTERS):
@@ -59,17 +70,17 @@ def main():
         dm = distance_matrix(cluster_points, data_points)
         am = np.argmin(dm, 1)
         # print("AM", am)
-        cluster_points = calc_mean(data_points, cluster_points, am, K_CLUSTERS)
 
-        plt.clf()
-        for j in range(K_CLUSTERS):
-            clustered_points = get_cluster(data_points, am, j)
-            plt.plot(clustered_points[:, 0], clustered_points[:, 1], COLORS[j]+'o')
-
+        plot_data(data_points, cluster_points, am, K_CLUSTERS, COLORS)
+        plt.title("K-MEANS ALGORITHM")
+        plt.xlabel("Height(Inches)")
+        plt.ylabel("Weight(Pounds)")
         plt.axis(RANGES)
         plt.draw()
         plt.pause(0.001)
         input("Press [enter] to continue.")
+
+        cluster_points = calc_mean(data_points, cluster_points, am, K_CLUSTERS)
 
     print("ENDING POINTS: ", cluster_points)
 
