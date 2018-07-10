@@ -25,11 +25,12 @@ class KMeans:
 
         self.cluster_points = np.empty((self.K_CLUSTERS, 2)).astype(int)
         for i in range(self.K_CLUSTERS):
-            self.cluster_points[i] = (randint(self.RANGES[0], self.RANGES[1]), randint(self.RANGES[2], self.RANGES[3]))
+            # self.cluster_points[i] = (randint(self.RANGES[0], self.RANGES[1]), randint(self.RANGES[2], self.RANGES[3]))
+            self.cluster_points[i] = self.data_points[randint(0, len(self.data_points))]
 
-        fig = plt.figure()
-        self.ax = fig.add_subplot(111)
-        fig.canvas.mpl_connect('button_press_event', self.onclick)
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111)
+        self.fig.canvas.mpl_connect('button_press_event', self.onclick)
         plt.title("K-MEANS ALGORITHM")
         plt.xlabel("Height(Inches)")
         plt.ylabel("Weight(Pounds)")
@@ -39,6 +40,7 @@ class KMeans:
         bnext = Button(axnext, 'Next')
         bnext.on_clicked(self.next_iteration)
         plt.show()
+        print("INITVEGE")
 
     @staticmethod
     def distance(point1, point2):
@@ -85,6 +87,10 @@ class KMeans:
         plt.draw()
 
     def run(self):
+        print("RUN1")
+        plt.draw()
+        print("RUN2")
+        plt.clf()
         print("STARTING POINTS: ", self.cluster_points)
         dm = self.distance_matrix(self.cluster_points, self.data_points)
         am = np.argmin(dm, 1)
