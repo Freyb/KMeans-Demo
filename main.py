@@ -8,26 +8,20 @@ from math import sqrt, pow
 class KMeans:
 
     def __init__(self):
-        self.K_CLUSTERS = 5
+        self.K_CLUSTERS = 2
         self.COLORS = ['b', 'g', 'y', 'c', 'k', 'm']
         self.RANGES = [60, 80, 80, 170]
         self.DELETE_THRESHOLD = 1
         assert len(self.COLORS) <= 6
         self.iterations = 0
-        """data_points = np.array([(1,1),
-                      (1,2),
-                      (2,2),
-                      (5,8),
-                      (6,8),
-                      (6,9)])"""
 
+        self.data_points = np.array([(70,100), (65,120)])
         #self.data_points = np.loadtxt('dataset.txt')
-        self.data_points = np.array([])
 
         self.cluster_points = np.empty((self.K_CLUSTERS, 2)).astype(int)
         for i in range(self.K_CLUSTERS):
             # self.cluster_points[i] = (randint(self.RANGES[0], self.RANGES[1]), randint(self.RANGES[2], self.RANGES[3]))
-            self.cluster_points[i] = self.data_points[randint(0, len(self.data_points))]
+            self.cluster_points[i] = self.data_points[randint(0, len(self.data_points)-1)]
 
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111)
