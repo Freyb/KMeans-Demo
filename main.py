@@ -21,7 +21,8 @@ class KMeans:
                       (6,8),
                       (6,9)])"""
 
-        self.data_points = np.loadtxt('dataset.txt')
+        #self.data_points = np.loadtxt('dataset.txt')
+        self.data_points = np.array([])
 
         self.cluster_points = np.empty((self.K_CLUSTERS, 2)).astype(int)
         for i in range(self.K_CLUSTERS):
@@ -40,7 +41,6 @@ class KMeans:
         bnext = Button(axnext, 'Next')
         bnext.on_clicked(self.next_iteration)
         plt.show()
-        print("INITVEGE")
 
     @staticmethod
     def distance(point1, point2):
@@ -73,7 +73,6 @@ class KMeans:
 
     def plot_data(self, argmin_vector):
         self.ax.clear()
-        print(self.ax)
         plt.subplot(self.ax)
         plt.title("K-MEANS ALGORITHM")
         plt.xlabel("Height(Inches)")
@@ -87,9 +86,7 @@ class KMeans:
         plt.draw()
 
     def run(self):
-        print("RUN1")
         plt.draw()
-        print("RUN2")
         plt.clf()
         print("STARTING POINTS: ", self.cluster_points)
         dm = self.distance_matrix(self.cluster_points, self.data_points)
@@ -119,9 +116,8 @@ class KMeans:
         # print("AM", am)
         self.cluster_points = self.calc_mean(am)
         self.plot_data(am)
-        print("KILEP")
 
 
 if __name__ == '__main__':
     kmeans = KMeans()
-    kmeans.run()
+    #kmeans.run()
